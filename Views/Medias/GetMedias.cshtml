@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Models.Media>
+@using DAL;
+
+@if (Model != null && Model.Any())
+{
+    foreach (var media in Model)
+    {
+        var user = DB.Users.Get(media.OwnerId);
+
+        <div class="mediaLayout">
+            <a href="/Medias/Details/@media.Id" class="media-link">
+
+                <div class="mediaThumbnail"
+                     style="background-image:url('https://img.youtube.com/vi/@media.YoutubeId/mqdefault.jpg');">
+                </div>
+
+                @if (user != null)
+                {
+                    <img src="@user.Avatar" class="creatorAvatar" title="@user.Name" />
+                }
+            </a>
+
+            <div class="ellipsis" style="margin-left: 4px; margin-right: 4px; font-size: 0.8em; font-weight: bold; margin-top:5px;">
+                @media.Title
+            </div>
+            <div style="margin-left: 4px; color: gray; font-size: 0.65em">
+                @media.Category <br /> @Helper.When(media.PublishDate)
+            </div>
+        </div>
+    }
+}
+else
+{
+    <h3 style="margin:20px;">Aucun résultat</h3>
+}
+<style>
+    .media-link {
+        display: block;
+        position: relative; 
+        width: 100%;
+        text-decoration: none;
+        overflow: hidden;
+    }
+
+    .mediaThumbnail {
+        width: 100%;
+        aspect-ratio: 16 / 9; 
+        background-size: cover;
+        background-position: center;
+    }
+
+    .creatorAvatar {
+        position: absolute; 
+        top: 8px;
+        right: 8px;
+        width: 35px; 
+        height: 35px; 
+        border-radius: 50%; 
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        object-fit: cover;
+        z-index: 10; 
+    }
+</style>

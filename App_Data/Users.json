@@ -1,0 +1,57 @@
+[
+  {
+    "Name": "Modérateur",
+    "Email": "admin@app.net",
+    "Password": "S4VzJg+yuLVrtp6gTvyn4ZT5Z3BDVEiqJYgxJWe8Y/I=BkJ2SdJ4hagqUSGplfcYAiynSno=",
+    "Access": 3,
+    "Blocked": false,
+    "Verified": true,
+    "Notify": true,
+    "Avatar": "/App_Assets/Users/5aa8957d-e980-4cac-b915-aaa63d0909f1.jpeg",
+    "Id": 1
+  },
+  {
+    "Name": "Charlot",
+    "Email": "charlot@yopmail.com",
+    "Password": "WrlJ2Wm2NgzA2bjAfyXIheughlqhxwl1Niuv60gVij8=M54D55bnJyGmTUGOmB1gdr1cjxU=",
+    "Access": 1,
+    "Blocked": false,
+    "Verified": true,
+    "Notify": true,
+    "Avatar": "/App_Assets/Users/no_avatar.png",
+    "Id": 2
+  },
+  {
+    "Name": "master",
+    "Email": "master@app.net",
+    "Password": "agwDnaBNVaq4kFBlnOarH4Qj/gC2ij7fAZO0s2mK7oc=ZSmBqBB3LtQjnHS3q3HSJq49HFQ=",
+    "Access": 3,
+    "Blocked": false,
+    "Verified": true,
+    "Notify": true,
+    "Avatar": "/App_Assets/Users/no_avatar.png",
+    "Id": 3
+  },
+  {
+    "Name": "Pascal",
+    "Email": "pascal@yopmail.com",
+    "Password": "I0Xc4cJ7qe/oPn3sOEByLXgEWweAIr0m9vH9U/Ixp9M=uzZmYk98yyypVfQbLthLp8WMOTw=",
+    "Access": 2,
+    "Blocked": false,
+    "Verified": true,
+    "Notify": true,
+    "Avatar": "/App_Assets/Users/no_avatar.png",
+    "Id": 4
+  },
+  {
+    "Name": "Marie",
+    "Email": "marie@yopmail.com",
+    "Password": "xmocw5LTScv02DctwOarlzbTzI89CYej+ygB23Qc0ng=h93iEy6tKK29g57HLbL8uTiATFM=",
+    "Access": 2,
+    "Blocked": false,
+    "Verified": true,
+    "Notify": true,
+    "Avatar": "/App_Assets/Users/no_avatar.png",
+    "Id": 5
+  }
+]
