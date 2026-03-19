@@ -6,6 +6,7 @@
     foreach (var media in Model)
     {
         var user = DB.Users.Get(media.OwnerId);
+        bool isMine = Models.User.ConnectedUser != null && media.OwnerId == Models.User.ConnectedUser.Id;
 
         <div class="mediaLayout">
             <a href="/Medias/Details/@media.Id" class="media-link">
@@ -14,10 +15,17 @@
                      style="background-image:url('https://img.youtube.com/vi/@media.YoutubeId/mqdefault.jpg');">
                 </div>
 
-                @if (user != null)
-                {
-                    <img src="@user.Avatar" class="creatorAvatar" title="@user.Name" />
-                }
+                <div class="media-icons-container">
+                    @if (isMine && media.Shared)
+                    {
+                        <img src="/Content/ui-images/shared.png" class="shared-icon-img" title="Ce média est partagé" />
+                    }
+
+                    @if (user != null)
+                    {
+                        <img src="@user.Avatar" class="creatorAvatar" title="@user.Name" />
+                    }
+                </div>
             </a>
 
             <div class="ellipsis" style="margin-left: 4px; margin-right: 4px; font-size: 0.8em; font-weight: bold; margin-top:5px;">
@@ -33,32 +41,3 @@ else
 {
     <h3 style="margin:20px;">Aucun résultat</h3>
 }
-<style>
-    .media-link {
-        display: block;
-        position: relative; 
-        width: 100%;
-        text-decoration: none;
-        overflow: hidden;
-    }
-
-    .mediaThumbnail {
-        width: 100%;
-        aspect-ratio: 16 / 9; 
-        background-size: cover;
-        background-position: center;
-    }
-
-    .creatorAvatar {
-        position: absolute; 
-        top: 8px;
-        right: 8px;
-        width: 35px; 
-        height: 35px; 
-        border-radius: 50%; 
-        border: 2px solid white;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        object-fit: cover;
-        z-index: 10; 
-    }
-</style>

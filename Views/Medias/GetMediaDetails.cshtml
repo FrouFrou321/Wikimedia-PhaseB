@@ -1,32 +1,58 @@
 ﻿@model Models.Media
+@using DAL;
+
+@{
+    var creator = DB.Users.Get(Model.OwnerId);
+    bool isMine = Models.User.ConnectedUser != null && Model.OwnerId == Models.User.ConnectedUser.Id;
+
+    bool accessDenied = !isMine && !Model.Shared;
+}
 
 @if (Model != null)
 {
-    <dl>
-        <dd>
-            @Model.Title
-        </dd>
-        <dd>
-            @Helper.YoutubePlayer(Model.YoutubeId)
-        </dd>
-        <dd class="description">
-            @Model.Description
-        </dd>
-        <dt>
-            Catégorie
-        </dt>
+    if (accessDenied)
+    {
+        <div id="accessDeniedFlag" class="not-shared-error">
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-triangle"></i>
+                Ce média n'est plus partagé par son propriétaire.
+            </div>
+        </div>
+    }
+    else
+    {
+        <dl class="details-layout">
+            <dd>
+                @if (isMine && Model.Shared)
+                {
+                    <span class="shared-mention">[Partagé]</span>
+                }
+            </dd>
+            <dd class="media-title-main">
+                @Model.Title
+            </dd>
 
-        <dd>
-            @Model.Category
-        </dd>
+            <dd class="video-container">
+                @Helper.YoutubePlayer(Model.YoutubeId)
+            </dd>
+            <dd>
+                @Model.Description
+            </dd>
 
-        <dt>
-            Date de publication
-        </dt>
+            <dt class="detail-label">Catégorie</dt>
+            <dd class="detail-value">@Model.Category</dd>
 
-        <dd>
-            @Helper.When(Model.PublishDate)
-        </dd>
+            <dt class="detail-label">Date de publication</dt>
+            <dd class="detail-value">@Helper.When(Model.PublishDate)</dd>
 
-    </dl>
+            <dt class="detail-label">Ajouté par</dt>
+            <dd class="creator-info-row">
+                @if (creator != null)
+                {
+                    <img src="@creator.Avatar" class="details-creator-avatar" />
+                    <span class="details-creator-name">@creator.Name</span>
+                }
+            </dd>
+        </dl>
+    }
 }

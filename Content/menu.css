@@ -77,4 +77,120 @@
 .flexItem {
     flex:1;
 }
+.detail-label {
+    color: gray;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
 
+.detail-value {
+    font-weight: bold;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.media-title-main {
+    font-weight: bold;
+    font-size: 1.8em;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.creator-info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.details-creator-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #eee;
+    object-fit: cover;
+}
+
+.details-creator-name {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.shared-mention {
+    color: gray;
+}
+
+.video-container {
+    margin: 15px 0 25px 0;
+    width: 100%;
+}
+
+.description-text {
+    white-space: pre-wrap;
+    margin-top: 5px;
+    font-size: 1.1em;
+}
+.media-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    text-decoration: none;
+}
+
+.creatorAvatar:hover {
+    transform: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    transition: none !important;
+}
+
+.creatorAvatar:hover {
+    width: 35px !important;
+    height: 35px !important;
+}
+
+.mediaThumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    background-position: center;
+}
+
+.media-icons-container {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    z-index: 20 !important;
+    width: auto !important;
+}
+
+.shared-icon-img {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: contain !important;
+    position: static !important;
+    display: block !important;
+}
+
+.creatorAvatar {
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 50% !important;
+    border: 2px solid white !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    object-fit: cover !important;
+    position: static !important;
+    display: block !important;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

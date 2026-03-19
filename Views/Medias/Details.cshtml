@@ -15,7 +15,11 @@
         })
         
         function mediaDetailsPostRefresh() {
-           // todo
+            if ($("#detailsPanel").find(".not-shared-error").length > 0) {
+                mediaDetails_ARP.stop();
+                alert("Cette vidéo n'est plus partagée ou a été retirée.");
+                window.location.href = "/Medias/Index";
+            }
         }
      </script>
 }

@@ -1,7 +1,9 @@
 ﻿using DAL;
 using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.ModelBinding;
 using System.Web.Mvc;
 using static Controllers.AccessControl;
 
@@ -91,25 +93,28 @@ public class MediasController : Controller
         try
         {
             IEnumerable<Media> result = null;
-            // Must evaluate HasChanged before forceRefresh, this will fix an usefull refresh
             if (DB.Medias.HasChanged || forceRefresh)
             {
-                // forceRefresh is true when a related view is produce
-                // DB.Medias.HasChanged is true when a change has been applied on any Media
-
                 InitSessionVariables();
+
+                int connectedUserId = (Models.User.ConnectedUser != null) ? Models.User.ConnectedUser.Id : -1;
+
+                var allMedias = DB.Medias.ToList();
+
+
+                result = allMedias.Where(m => m.Shared || m.OwnerId == connectedUserId);
+
                 bool search = (bool)Session["Search"];
                 string searchString = (string)Session["SearchString"];
 
                 if (search)
                 {
-                    result = DB.Medias.ToList().Where(c => c.Title.ToLower().Contains(searchString)).OrderBy(c => c.Title);
+                    result = result.Where(c => c.Title.ToLower().Contains(searchString));
                     string SelectedCategory = (string)Session["SelectedCategory"];
                     if (SelectedCategory != "")
                         result = result.Where(c => c.Category == SelectedCategory);
                 }
-                else
-                    result = DB.Medias.ToList();
+
                 if ((bool)Session["SortAscending"])
                 {
                     if ((bool)Session["SortByTitle"])
@@ -124,6 +129,7 @@ public class MediasController : Controller
                     else
                         result = result.OrderByDescending(c => c.PublishDate);
                 }
+
                 return PartialView(result);
             }
             return null;
@@ -133,7 +139,6 @@ public class MediasController : Controller
             return Content("Erreur interne" + ex.Message, "text/html");
         }
     }
-
 
     public ActionResult List()
     {
@@ -182,14 +187,18 @@ public class MediasController : Controller
 
     public ActionResult Details(int id)
     {
-        Session["CurrentMediaId"] = id;
+        
         Media Media = DB.Medias.Get(id);
-        if (Media != null)
+        int connectedUserId = (Models.User.ConnectedUser != null) ? Models.User.ConnectedUser.Id : -1;
+
+        if (Media == null || (!Media.Shared && Media.OwnerId != connectedUserId))
         {
-            Session["CurrentMediaTitle"] = Media.Title;
-            return View(Media);
+            return RedirectToAction("List");
         }
-        return RedirectToAction("List");
+
+        Session["CurrentMediaId"] = id;
+        Session["CurrentMediaTitle"] = Media.Title;
+        return View(Media);
     }
     [UserAccess(Access.Write)]
     public ActionResult Create()
@@ -199,63 +208,79 @@ public class MediasController : Controller
 
     [HttpPost]
     [UserAccess(Access.Write)]
-    /* Install anti forgery token verification attribute.
-     * the goal is to prevent submission of data from a page 
-     * that has not been produced by this application*/
     [ValidateAntiForgeryToken()]
     public ActionResult Create(Media Media)
     {
+        if (Models.User.ConnectedUser != null)
+        {
+            Media.OwnerId = Models.User.ConnectedUser.Id;
+        }
+
+        Media.PublishDate = DateTime.Now;
         DB.Medias.Add(Media);
         return RedirectToAction("List");
     }
-    
+
     [UserAccess(Access.Write)]
     public ActionResult Edit()
     {
-        // Note that id is not provided has a parameter.
-        // It use the Session["CurrentMediaId"] set within
-        // Details(int id) action
-        // This way we prevent from malicious requests that could
-        // modify or delete programatically the all the Medias
-
         int id = Session["CurrentMediaId"] != null ? (int)Session["CurrentMediaId"] : 0;
         if (id != 0)
         {
             Media Media = DB.Medias.Get(id);
-            if (Media != null)
-                return View(Media);
+            var user = Models.User.ConnectedUser;
+
+            if (Media != null && user != null)
+            {
+                if (Media.OwnerId == user.Id || user.IsAdmin)
+                {
+                    return View(Media);
+                }
+            }
         }
-        return RedirectToAction("List");
+        return Redirect("/Accounts/Login?message=Accès illégal!&success=false");
     }
-    
-    [UserAccess(Access.Write)]
+
     [HttpPost]
+    [UserAccess(Access.Write)]
     [ValidateAntiForgeryToken()]
     public ActionResult Edit(Media Media)
     {
-        // Has explained earlier, id of Media is stored server side an not provided in form data
-        // passed in the method in order to prever from malicious requests
-
         int id = Session["CurrentMediaId"] != null ? (int)Session["CurrentMediaId"] : 0;
-
-        // Make sure that the Media of id really exist
         Media storedMedia = DB.Medias.Get(id);
-        if (storedMedia != null)
+        var user = Models.User.ConnectedUser;
+
+        if (storedMedia != null && user != null)
         {
-            Media.Id = id; // patch the Id
-            Media.PublishDate = storedMedia.PublishDate; // keep orignal PublishDate
-            DB.Medias.Update(Media);
+            if (storedMedia.OwnerId == user.Id || user.IsAdmin)
+            {
+                Media.Id = id;
+                Media.PublishDate = storedMedia.PublishDate;
+                Media.OwnerId = storedMedia.OwnerId; 
+
+                DB.Medias.Update(Media);
+                return RedirectToAction("Details/" + id);
+            }
         }
-        return RedirectToAction("Details/" + id);
+        return RedirectToAction("List");
     }
-    
+
     [UserAccess(Access.Write)]
     public ActionResult Delete()
     {
         int id = Session["CurrentMediaId"] != null ? (int)Session["CurrentMediaId"] : 0;
         if (id != 0)
         {
-            DB.Medias.Delete(id);
+            Media media = DB.Medias.Get(id);
+            var user = Models.User.ConnectedUser;
+
+            if (media != null && user != null)
+            {
+                if (media.OwnerId == user.Id || user.IsAdmin)
+                {
+                    DB.Medias.Delete(id);
+                }
+            }
         }
         return RedirectToAction("List");
     }
